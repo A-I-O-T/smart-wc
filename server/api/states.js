@@ -2,7 +2,8 @@ import {TuyaContext} from '@tuya/tuya-connector-nodejs';
 import {readFile} from 'fs/promises'
 import {resolve} from 'path'
 
-let TUYA, BUILDING, BUILDING_STR, STRATEGY = [], DEVICE_TO_CATEGORY_MAP = {}, REGION = "CN", MOCK = false, inited = false;
+let TUYA, BUILDING, BUILDING_STR, STRATEGY = [], DEVICE_TO_CATEGORY_MAP = {}, REGION = "CN",
+    MOCK = process.env.mock === "true", inited = false;
 
 export default defineEventHandler(async (event) => {
     if (MOCK) {
@@ -70,9 +71,6 @@ async function getDeviceStatus(gender) {
 }
 
 async function initConfig() {
-    MOCK = process.env.mock === "true";
-    if (MOCK) return;
-
     const filePath = resolve(process.cwd(), 'config.json')
     const fileContent = await readFile(filePath, 'utf-8')
     const config = JSON.parse(fileContent)

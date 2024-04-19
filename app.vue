@@ -38,9 +38,7 @@ async function fetchWCInfo() {
   finished.value = false;
   try {
     const {data} = await useFetch('/api/states?gender=' + gender.value);
-    if (data.value) {
-      wcInfo.value = data.value;
-    }
+    wcInfo.value = data.value;
   } catch (error) {
     console.log(error)
   } finally {
