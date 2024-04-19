@@ -2,7 +2,7 @@ import {TuyaContext} from '@tuya/tuya-connector-nodejs';
 import {readFile} from 'fs/promises'
 import {resolve} from 'path'
 
-let TUYA, BUILDING, BUILDING_STR, STRATEGY, DEVICE_TO_CATEGORY_MAP, MOCK = false, inited = false;
+let TUYA, BUILDING, BUILDING_STR, STRATEGY = [], DEVICE_TO_CATEGORY_MAP = {}, REGION = "CN", MOCK = false, inited = false;
 
 export default defineEventHandler(async (event) => {
     if (!inited) {
@@ -37,7 +37,7 @@ async function getDeviceStatus(gender) {
                 device_ids: allDevices.slice(i, i + 20).join(',')
             }
         });
-        response.result.forEach(device => {
+        response.result?.forEach(device => {
             // 找到指定的 device.status 中的 code 字段，其中 code 的值根据 设备 id => category => strategy => code 的映射关系
             const category = DEVICE_TO_CATEGORY_MAP[device.id];
             const strategy = STRATEGY.find(item => item.category === category);
@@ -72,11 +72,12 @@ async function initConfig() {
     const filePath = resolve(process.cwd(), 'config.json')
     const fileContent = await readFile(filePath, 'utf-8')
     const config = JSON.parse(fileContent)
-    MOCK = config.mock;
+    MOCK = process.env.mock === "true";
 
-    // 初始化 TuyaContext
+    // 初始化 TuyaContext 如果配置文件中有 region 字段，则使用配置文件中的 region，否则使用默认值
+    REGION = config.region || REGION;
     TUYA = new TuyaContext({
-        baseUrl: 'https://openapi.tuyacn.com',
+        baseUrl: TUYA_REGION[REGION],
         accessKey: config.access_key,
         secretKey: config.secret_key,
     });
@@ -105,12 +106,29 @@ async function initConfig() {
                 device_ids: allDevices.slice(i, i + 20).join(',')
             }
         });
-        response.result.forEach(device => {
+        response.result?.forEach(device => {
             map[device.id] = device.category;
         });
     }
     DEVICE_TO_CATEGORY_MAP = map;
-    console.log('DEVICE_TO_CATEGORY_MAP => ', DEVICE_TO_CATEGORY_MAP);
+}
+
+/**
+ * 中国数据中心	https://openapi.tuyacn.com
+ * 美西数据中心	https://openapi.tuyaus.com
+ * 美东数据中心	https://openapi-ueaz.tuyaus.com
+ * 中欧数据中心	https://openapi.tuyaeu.com
+ * 西欧数据中心	https://openapi-weaz.tuyaeu.com
+ * 印度数据中心	https://openapi.tuyain.com
+ * @type {{CN: string}}
+ */
+const TUYA_REGION = {
+    "CN": "https://openapi.tuyacn.com",
+    "US": "https://openapi.tuyaus.com",
+    "UEAZ": "https://openapi-ueaz.tuyaus.com",
+    "EU": "https://openapi.tuyaeu.com",
+    "WEAZ": "https://openapi-weaz.tuyaeu.com",
+    "IND": "https://openapi.tuyain.com"
 }
 function mockData(gender) {
     let ret = [];
