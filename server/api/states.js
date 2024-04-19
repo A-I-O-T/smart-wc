@@ -40,7 +40,7 @@ async function getDeviceStatus(gender) {
         response.result.forEach(device => {
             // 找到指定的 device.status 中的 code 字段，其中 code 的值根据 设备 id => category => strategy => code 的映射关系
             const category = DEVICE_TO_CATEGORY_MAP[device.id];
-            const strategy = STRATEGY.find(item => item.category = category);
+            const strategy = STRATEGY.find(item => item.category === category);
             const strategyCode = strategy.code;
             const strategyValue = strategy.value;
             const currentValue = device.status.find(status => status.code === strategyCode).value;
@@ -110,6 +110,7 @@ async function initConfig() {
         });
     }
     DEVICE_TO_CATEGORY_MAP = map;
+    console.log('DEVICE_TO_CATEGORY_MAP => ', DEVICE_TO_CATEGORY_MAP);
 }
 function mockData(gender) {
     let ret = [];
