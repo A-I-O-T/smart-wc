@@ -6,7 +6,7 @@
 ![GIF 演示](./public/demo.gif)
 
 ## 一键快速体验
-1、前置条件：确保已安装 [Node.js](https://nodejs.org/) 和 [Git](https://git-scm.com/)。  
+1、前置条件：确保已安装 [Node.js](https://nodejs.org/) 和 [Git](https://git-scm.com/)，其中 Node.js 版本 >= 18.0.0。  
 2、一键快速体验是通过 mock 的方式启动项目，不需要连接和配置真实设备，可以快速体验页面功能。
 
 ### Mac/Linux
