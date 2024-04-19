@@ -11,6 +11,15 @@ const wcInfo = ref({
 const loading = ref(false);
 const finished = ref(true);
 
+/**
+ * 监听配置变更，重新获取数据
+ */
+watch(gender, async (newGender, oldGender) => {
+  if (newGender !== oldGender) {
+    await fetchWCInfo();
+  }
+})
+
 onMounted(async () => {
   // 从 localStorage 加载配置
   if (process.browser) {
@@ -29,8 +38,7 @@ async function fetchWCInfo() {
   finished.value = false;
   try {
     const {data} = await useFetch('/api/states?gender=' + gender.value);
-    wcInfo.value.name = data.value.name;
-    wcInfo.value.wc = data.value.wc;
+    wcInfo.value = data.value;
   } catch (error) {
     console.log(error)
   } finally {
@@ -38,15 +46,6 @@ async function fetchWCInfo() {
     finished.value = true;
   }
 }
-
-/**
- * 监听配置变更，重新获取数据
- */
-watch(gender, async (newGender, oldGender) => {
-  if (newGender !== oldGender) {
-    await fetchWCInfo();
-  }
-})
 
 const settingShow = ref(false)
 function openSettings() {
