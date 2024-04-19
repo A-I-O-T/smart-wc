@@ -132,10 +132,10 @@ const TUYA_REGION = {
 }
 function mockData(gender) {
     let ret = [];
-    for (let i = Math.floor(Math.random() * 10); i > 0 ; i--) {
+    for (let i = Math.floor((Math.random() + 0.3) * 10); i > 0 ; i--) {
         const floor = `${i + 1}楼`;
         const list = [];
-        for (let j = 0; j < Math.floor(Math.random() * 5) + 1; j++) {
+        for (let j = 0; j < Math.floor((Math.random() + 0.5) * 5) + 1; j++) {
             list.push({
                 location: ['东', '南', '西', '北'][Math.floor(Math.random() * 4)],
                 capacity: Math.floor(Math.random() * 8) + 1,

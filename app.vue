@@ -107,6 +107,13 @@ const GENDER_ICON = "/favicon.ico"
 </template>
 
 <style scoped>
+#app {
+  max-width: 500px;
+  margin: 0 auto;
+  border: 1px solid #3cb75c;
+}
+
+
 .wc-list-container {
   margin-top: 20px;
   padding: 0 20px;
