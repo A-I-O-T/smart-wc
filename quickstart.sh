@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# 检查 是否安装了 git
+echo "Checking git..."
 if ! [ -x "$(command -v git)" ]; then
     echo 'Error: git is not installed.' >&2
     exit 1
 fi
-# 检查是否按照了 node 且node 版本 >= 18
+
+echo "Checking node..."
 if ! [ -x "$(command -v node)" ]; then
     echo 'Error: Node.js is not installed.' >&2
     exit 1
