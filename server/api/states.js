@@ -5,18 +5,19 @@ import {resolve} from 'path'
 let TUYA, BUILDING, BUILDING_STR, STRATEGY = [], DEVICE_TO_CATEGORY_MAP = {}, REGION = "CN", MOCK = false, inited = false;
 
 export default defineEventHandler(async (event) => {
+    if (MOCK) {
+        return mockData(getQuery(event).gender)
+    }
     if (!inited) {
         await initConfig();
         inited = true;
-    }
-    if (MOCK) {
-        return mockData(getQuery(event).gender)
     }
     return await getDeviceStatus(getQuery(event).gender);
 })
 
 async function getDeviceStatus(gender) {
     // 根据性别过滤设备列表
+    if (BUILDING_STR === undefined) return;
     const curBuilding = JSON.parse(BUILDING_STR);
     const allDevices = curBuilding.wc.reduce((devices, floor) => {
         const floorDevices = floor.list
@@ -69,10 +70,12 @@ async function getDeviceStatus(gender) {
 }
 
 async function initConfig() {
+    MOCK = process.env.mock === "true";
+    if (MOCK) return;
+
     const filePath = resolve(process.cwd(), 'config.json')
     const fileContent = await readFile(filePath, 'utf-8')
     const config = JSON.parse(fileContent)
-    MOCK = process.env.mock === "true";
 
     // 初始化 TuyaContext 如果配置文件中有 region 字段，则使用配置文件中的 region，否则使用默认值
     REGION = config.region || REGION;
